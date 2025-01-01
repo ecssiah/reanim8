@@ -14,191 +14,184 @@ class Phase:
 class Animator:
     SIZE = 800
 
-    SPEED = 8.0
+    SPEED = 1.0
     DEPTH = 4
     BRUSH_SIZE = 1.0
     DISPLAY_FACTOR = 180
 
     PHASES = [
-        # Phase 1
-        {
-            "direction": 1.0,
-            "radius": 1.0,
-            "center": pygame.Vector2(0, 1),
-            "start": 1 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        {
-            "direction": -1.0,
-            "radius": 1.0,
-            "center": pygame.Vector2(0, -1),
-            "start": 5 / 2 * math.pi,
-            "end": 1 / 2 * math.pi,
-        },
-        {
-            "direction": -1.0,
-            "radius": 0.5,
-            "center": pygame.Vector2(0, -0.5),
-            "start": 5 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        {
-            "direction": 1.0,
-            "radius": 0.5,
-            "center": pygame.Vector2(0, -1.5),
-            "start": 1 / 2 * math.pi,
-            "end": 5 / 2 * math.pi,
-        },
-        {
-            "direction": 1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, -1.25),
-            "start": 1 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        {
-            "direction": -1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, -1.75),
-            "start": 5 / 2 * math.pi,
-            "end": 1 / 2 * math.pi,
-        },
-        # Phase 2
-        {
-            "direction": 1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, -1.25),
-            "start": 3 / 2 * math.pi,
-            "end": 5 / 2 * math.pi,
-        },
-        {
-            "direction": -1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, -0.75),
-            "start": 3 / 2 * math.pi,
-            "end": 1 / 2 * math.pi,
-        },
-        {
-            "direction": 1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, -0.25),
-            "start": 3 / 2 * math.pi,
-            "end": 5 / 2 * math.pi,
-        },
-        # Phase 3
-        {
-            "direction": -1.0,
-            "radius": 0.50,
-            "center": pygame.Vector2(0, 0.50),
-            "start": 3 / 2 * math.pi,
-            "end": 1 / 2 * math.pi,
-        },
-        {
-            "direction": 1.0,
-            "radius": 0.50,
-            "center": pygame.Vector2(0, 1.5),
-            "start": 3 / 2 * math.pi,
-            "end": 5 / 2 * math.pi,
-        },
-        {
-            "direction": 1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, 1.75),
-            "start": 1 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        {
-            "direction": -1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, 1.25),
-            "start": 5 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        {
-            "direction": -1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, 1.25),
-            "start": 3 / 2 * math.pi,
-            "end": 1 / 2 * math.pi,
-        },
-        {
-            "direction": 1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, 1.75),
-            "start": 3 / 2 * math.pi,
-            "end": 5 / 2 * math.pi,
-        },
-        {
-            "direction": 1.0,
-            "radius": 0.50,
-            "center": pygame.Vector2(0, 1.50),
-            "start": 1 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        {
-            "direction": -1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, 0.75),
-            "start": 5 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        {
-            "direction": 1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, 0.25),
-            "start": 1 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        # Phase 3
-        {
-            "direction": 1.0,
-            "radius": 0.50,
-            "center": pygame.Vector2(0, 0.5),
-            "start": 3 / 2 * math.pi,
-            "end": 5 / 2 * math.pi,
-        },
-        {
-            "direction": 1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, 0.75),
-            "start": 1 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        {
-            "direction": -1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, 0.25),
-            "start": 5 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        {
-            "direction": 1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, -0.25),
-            "start": 1 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        {
-            "direction": -1.0,
-            "radius": 0.25,
-            "center": pygame.Vector2(0, -0.75),
-            "start": 5 / 2 * math.pi,
-            "end": 3 / 2 * math.pi,
-        },
-        {
-            "direction": -1.0,
-            "radius": 0.50,
-            "center": pygame.Vector2(0, -0.50),
-            "start": 3 / 2 * math.pi,
-            "end": 1 / 2 * math.pi,
-        },
-        {
-            "direction": 1.0,
-            "radius": 1.0,
-            "center": pygame.Vector2(0, 1.0),
-            "start": 3 / 2 * math.pi,
-            "end": 5 / 2 * math.pi,
-        },
+        [
+            {
+                "direction": 1.0,
+                "radius": 1.0,
+                "center": pygame.Vector2(0, 1),
+                "start": 3 / 2 * math.pi,
+                "end": 7 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.5,
+                "center": pygame.Vector2(0, 0.5),
+                "start": 3 / 2 * math.pi,
+                "end": 5 / 2 * math.pi,
+            },
+            {
+                "direction": -1.0,
+                "radius": 0.5,
+                "center": pygame.Vector2(0, 1.5),
+                "start": 7 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+            {
+                "direction": -1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, 1.25),
+                "start": 3 / 2 * math.pi,
+                "end": 1 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, 1.75),
+                "start": 3 / 2 * math.pi,
+                "end": 5 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, 1.75),
+                "start": 1 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+            {
+                "direction": -1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, 1.25),
+                "start": 5 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, 0.75),
+                "start": 1 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+            {
+                "direction": -1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, 0.25),
+                "start": 5 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+            {
+                "direction": -1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, 0.25),
+                "start": 3 / 2 * math.pi,
+                "end": 1 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, 0.75),
+                "start": 3 / 2 * math.pi,
+                "end": 5 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.50,
+                "center": pygame.Vector2(0, 0.50),
+                "start": 1 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+        ],
+        [
+            {
+                "direction": 1.0,
+                "radius": 1.0,
+                "center": pygame.Vector2(0, -1),
+                "start": 1 / 2 * math.pi,
+                "end": 5 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.5,
+                "center": pygame.Vector2(0, -0.5),
+                "start": 1 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+            {
+                "direction": -1.0,
+                "radius": 0.5,
+                "center": pygame.Vector2(0, -1.5),
+                "start": 5 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+            {
+                "direction": -1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, -1.25),
+                "start": 5 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, -1.75),
+                "start": 5 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, -1.75),
+                "start": 3 / 2 * math.pi,
+                "end": 5 / 2 * math.pi,
+            },
+            {
+                "direction": -1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, -1.25),
+                "start": 3 / 2 * math.pi,
+                "end": 1 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, -0.75),
+                "start": 3 / 2 * math.pi,
+                "end": 5 / 2 * math.pi,
+            },
+            {
+                "direction": -1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, -0.25),
+                "start": 3 / 2 * math.pi,
+                "end": 1 / 2 * math.pi,
+            },
+            {
+                "direction": -1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, -0.25),
+                "start": 5 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.25,
+                "center": pygame.Vector2(0, -0.75),
+                "start": 1 / 2 * math.pi,
+                "end": 3 / 2 * math.pi,
+            },
+            {
+                "direction": 1.0,
+                "radius": 0.50,
+                "center": pygame.Vector2(0, -0.50),
+                "start": 3 / 2 * math.pi,
+                "end": 5 / 2 * math.pi,
+            },
+        ],
     ]
 
     def __init__(self):
@@ -212,11 +205,18 @@ class Animator:
         self.time = 0.0
 
         self.phase_index = 0
-        self.phase = Animator.PHASES[self.phase_index]
 
-        self.angle = self.phase["start"]
-        self.radius = self.phase["radius"]
-        self.center = self.phase["center"]
+        self.phase1 = Animator.PHASES[0][self.phase_index]
+
+        self.angle1 = self.phase1["start"]
+        self.radius1 = self.phase1["radius"]
+        self.center1 = self.phase1["center"]
+
+        self.phase2 = Animator.PHASES[1][self.phase_index]
+
+        self.angle2 = self.phase2["start"]
+        self.radius2 = self.phase2["radius"]
+        self.center2 = self.phase2["center"]
 
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((Animator.SIZE, Animator.SIZE))
@@ -230,41 +230,64 @@ class Animator:
                     self.active = False
 
             if self.drawing == True:
-                if self.phase["direction"] == 1:
-                    if self.angle > self.phase["end"]:
+                if self.phase1["direction"] == 1:
+                    if self.angle1 > self.phase1["end"]:
                         self.phase_index += 1
 
-                        if self.phase_index < len(Animator.PHASES):
-                            self.phase = Animator.PHASES[self.phase_index]
+                        if self.phase_index < len(Animator.PHASES[0]):
+                            self.phase1 = Animator.PHASES[0][self.phase_index]
 
-                            self.angle = self.phase["start"]
-                            self.radius = self.phase["radius"]
-                            self.center = self.phase["center"]
+                            self.angle1 = self.phase1["start"]
+                            self.radius1 = self.phase1["radius"]
+                            self.center1 = self.phase1["center"]
+
+                            self.phase2 = Animator.PHASES[1][self.phase_index]
+
+                            self.angle2 = self.phase2["start"]
+                            self.radius2 = self.phase2["radius"]
+                            self.center2 = self.phase2["center"]
                         else:
                             self.drawing = False
-                elif self.phase["direction"] == -1:
-                    if self.angle < self.phase["end"]:
+                elif self.phase1["direction"] == -1:
+                    if self.angle1 < self.phase1["end"]:
                         self.phase_index += 1
 
-                        if self.phase_index < len(Animator.PHASES):
-                            self.phase = Animator.PHASES[self.phase_index]
+                        if self.phase_index < len(Animator.PHASES[0]):
+                            self.phase1 = Animator.PHASES[0][self.phase_index]
 
-                            self.angle = self.phase["start"]
-                            self.radius = self.phase["radius"]
-                            self.center = self.phase["center"]
+                            self.angle1 = self.phase1["start"]
+                            self.radius1 = self.phase1["radius"]
+                            self.center1 = self.phase1["center"]
+
+                            self.phase2 = Animator.PHASES[1][self.phase_index]
+
+                            self.angle2 = self.phase2["start"]
+                            self.radius2 = self.phase2["radius"]
+                            self.center2 = self.phase2["center"]
                         else:
                             self.drawing = False
 
-                position = self.get_position(self.radius, self.angle, self.center)
+                position1 = self.get_position(self.radius1, self.angle1, self.center1)
 
                 pygame.draw.circle(
                     self.screen,
                     self.get_brush_color_by_time(self.time),
-                    self.to_screen(position),
+                    self.to_screen(position1),
                     Animator.BRUSH_SIZE,
                 )
 
-                self.angle += self.phase["direction"] * 1 / 100.0 * Animator.SPEED
+                self.angle1 += self.phase1["direction"] * 1 / 100.0 * Animator.SPEED
+
+                position2 = self.get_position(self.radius2, self.angle2, self.center2)
+
+                pygame.draw.circle(
+                    self.screen,
+                    self.get_brush_color_by_time(self.time),
+                    self.to_screen(position2),
+                    Animator.BRUSH_SIZE,
+                )
+
+                self.angle2 += self.phase2["direction"] * 1 / 100.0 * Animator.SPEED
 
             pygame.display.flip()
 
