@@ -25,10 +25,10 @@ class Animator:
     WIDTH: int = 1200
     HEIGHT: int = 800
 
-    SPEED: float = 1.0
-    DEPTH: int = 6
+    SPEED: float = 6.0
+    DEPTH: int = 7
     BRUSH_SIZE: int = 1
-    DISPLAY_FACTOR: int = 128
+    DISPLAY_FACTOR: int = 192
 
     layers: List[pygame.Surface]
     steps: List[Dict[str, Any]]
@@ -43,7 +43,7 @@ class Animator:
         self.active = True
         self.drawing = True
 
-        self.color_scheme = ColorScheme.Time
+        self.color_scheme = ColorScheme.Solid
 
         self.time = 0.0
 
@@ -75,102 +75,7 @@ class Animator:
                     self.active = False
 
             if self.drawing == True:
-                if self.step["direction"] == 1:
-                    if self.angles["current"] > self.step["angle"] + math.pi:
-                        self.step_index += 1
-
-                        if self.step_index < len(self.steps):
-                            self.step = self.steps[self.step_index]
-
-                            self.angles["previous"] = self.step["angle"]
-                            self.angles["current"] = self.step["angle"]
-                            self.radius = self.step["radius"]
-                            self.center = self.step["center"]
-                        else:
-                            self.drawing = False
-                elif self.step["direction"] == -1:
-                    if self.angles["current"] < self.step["angle"] - math.pi:
-                        self.step_index += 1
-
-                        if self.step_index < len(self.steps):
-                            self.step = self.steps[self.step_index]
-
-                            self.angles["previous"] = self.step["angle"]
-                            self.angles["current"] = self.step["angle"]
-                            self.radius = self.step["radius"]
-                            self.center = self.step["center"]
-                        else:
-                            self.drawing = False
-
-                position_top = pygame.Vector2(
-                    self.center.x, self.center.y
-                ) + pygame.Vector2(-self.radius, self.radius)
-                position_bottom = pygame.Vector2(
-                    self.center.x, -self.center.y
-                ) + pygame.Vector2(-self.radius, self.radius)
-
-                size = pygame.Vector2(2 * self.radius, 2 * self.radius)
-
-                bounding_rect_top = (
-                    Animator.WIDTH // 2 + position_top.x * Animator.DISPLAY_FACTOR,
-                    Animator.HEIGHT // 2 - position_top.y * Animator.DISPLAY_FACTOR,
-                    size.x * Animator.DISPLAY_FACTOR,
-                    size.y * Animator.DISPLAY_FACTOR,
-                )
-
-                bounding_rect_bottom = (
-                    Animator.WIDTH // 2 + position_bottom.x * Animator.DISPLAY_FACTOR,
-                    Animator.HEIGHT // 2 - position_bottom.y * Animator.DISPLAY_FACTOR,
-                    size.x * Animator.DISPLAY_FACTOR,
-                    size.y * Animator.DISPLAY_FACTOR,
-                )
-
-                if self.angles["current"] >= self.angles["previous"]:
-                    pygame.draw.arc(
-                        self.layers[self.step["depth"]],
-                        self.__get_brush_color(),
-                        bounding_rect_top,
-                        self.angles["previous"],
-                        self.angles["current"],
-                        Animator.BRUSH_SIZE,
-                    )
-
-                    pygame.draw.arc(
-                        self.layers[self.step["depth"]],
-                        self.__get_brush_color(),
-                        bounding_rect_bottom,
-                        self.angles["previous"] + math.pi,
-                        self.angles["current"] + math.pi,
-                        Animator.BRUSH_SIZE,
-                    )
-                else:
-                    pygame.draw.arc(
-                        self.layers[self.step["depth"]],
-                        self.__get_brush_color(),
-                        bounding_rect_top,
-                        self.angles["current"],
-                        self.angles["previous"],
-                        Animator.BRUSH_SIZE,
-                    )
-
-                    pygame.draw.arc(
-                        self.layers[self.step["depth"]],
-                        self.__get_brush_color(),
-                        bounding_rect_bottom,
-                        self.angles["current"] + math.pi,
-                        self.angles["previous"] + math.pi,
-                        Animator.BRUSH_SIZE,
-                    )
-
-                delta = (
-                    self.step["direction"]
-                    * (1 / 128)
-                    * Animator.SPEED
-                    * (1 / self.radius)
-                )
-
-                self.angles["previous"] = self.angles["current"]
-                self.angles["current"] += delta
+                self.__draw()
 
             for layer in self.layers:
                 self.screen.blit(layer, (0, 0))
@@ -181,34 +86,106 @@ class Animator:
 
         pygame.quit()
 
+    def __draw(self) -> None:
+        step_complete = (
+            self.step["direction"] == 1
+            and self.angles["current"] > self.step["angle"] + math.pi
+        ) or (
+            self.step["direction"] == -1
+            and self.angles["current"] < self.step["angle"] - math.pi
+        )
+
+        if step_complete:
+            self.__update_step()
+
+        position_top = pygame.Vector2(
+            self.center.x - self.radius, self.center.y + self.radius
+        )
+        position_bottom = pygame.Vector2(
+            self.center.x - self.radius, -self.center.y + self.radius
+        )
+
+        size = pygame.Vector2(2 * self.radius, 2 * self.radius)
+
+        bounding_rect_top = pygame.Rect(
+            Animator.WIDTH // 2 + position_top.x * Animator.DISPLAY_FACTOR,
+            Animator.HEIGHT // 2 - position_top.y * Animator.DISPLAY_FACTOR,
+            size.x * Animator.DISPLAY_FACTOR,
+            size.y * Animator.DISPLAY_FACTOR,
+        )
+
+        bounding_rect_bottom = pygame.Rect(
+            Animator.WIDTH // 2 + position_bottom.x * Animator.DISPLAY_FACTOR,
+            Animator.HEIGHT // 2 - position_bottom.y * Animator.DISPLAY_FACTOR,
+            size.x * Animator.DISPLAY_FACTOR,
+            size.y * Animator.DISPLAY_FACTOR,
+        )
+
+        if self.angles["current"] >= self.angles["previous"]:
+            pygame.draw.arc(
+                self.layers[self.step["depth"]],
+                self.__get_brush_color(),
+                bounding_rect_top,
+                self.angles["previous"],
+                self.angles["current"],
+                Animator.BRUSH_SIZE,
+            )
+
+            pygame.draw.arc(
+                self.layers[self.step["depth"]],
+                self.__get_brush_color(),
+                bounding_rect_bottom,
+                self.angles["previous"] + math.pi,
+                self.angles["current"] + math.pi,
+                Animator.BRUSH_SIZE,
+            )
+        else:
+            pygame.draw.arc(
+                self.layers[self.step["depth"]],
+                self.__get_brush_color(),
+                bounding_rect_top,
+                self.angles["current"],
+                self.angles["previous"],
+                Animator.BRUSH_SIZE,
+            )
+
+            pygame.draw.arc(
+                self.layers[self.step["depth"]],
+                self.__get_brush_color(),
+                bounding_rect_bottom,
+                self.angles["current"] + math.pi,
+                self.angles["previous"] + math.pi,
+                Animator.BRUSH_SIZE,
+            )
+
+        delta = self.step["direction"] * (1 / 128) * Animator.SPEED * (1 / self.radius)
+
+        self.angles["previous"] = self.angles["current"]
+        self.angles["current"] += delta
+
     def __calculate_steps(self) -> None:
         self.steps = []
 
         for layer in range(1, Animator.DEPTH + 1, 1):
-            count = 2**layer // 2
+            arc_count = 2**layer // 2
             radius = 1.0 / 2 ** (layer - 1)
+            angle = math.pi / 2 if layer % 2 == 0 else -math.pi / 2
 
-            for i in range(count):
+            for i in range(arc_count):
                 if layer == 1:
                     direction = 1
                 else:
                     if layer % 2 == 0:
-                        if i % 2 == 0:
-                            direction = 1
-                        else:
-                            direction = -1
+                        direction = 1 if i % 2 == 0 else -1
                     else:
-                        if i % 2 == 0:
-                            direction = -1
-                        else:
-                            direction = 1
-
-                angle = math.pi / 2 if layer % 2 == 0 else -math.pi / 2
+                        direction = -1 if i % 2 == 0 else 1
 
                 if layer % 2 == 0:
-                    center = pygame.Vector2(0, 2.0 - (radius + 2 * radius * i))
+                    offset = 2.0 - radius * (1 + 2 * i)
                 else:
-                    center = pygame.Vector2(0, radius + 2 * radius * i)
+                    offset = radius * (1 + 2 * i)
+
+                center = pygame.Vector2(0, offset)
 
                 step = {
                     "depth": layer,
@@ -221,31 +198,25 @@ class Animator:
                 self.steps.append(step)
 
         for layer in range(Animator.DEPTH, 0, -1):
-            count = 2**layer // 2
+            arc_count = 2**layer // 2
+            radius = 1.0 / 2 ** (layer - 1)
+            angle = -math.pi / 2 if layer % 2 == 0 else math.pi / 2
 
-            for i in range(count):
+            for i in range(arc_count):
                 if layer == 1:
                     direction = 1
                 else:
                     if layer % 2 == 0:
-                        if i % 2 == 0:
-                            direction = -1
-                        else:
-                            direction = 1
+                        direction = -1 if i % 2 == 0 else 1
                     else:
-                        if i % 2 == 0:
-                            direction = 1
-                        else:
-                            direction = -1
-
-                angle = -math.pi / 2 if layer % 2 == 0 else math.pi / 2
-
-                radius = 1.0 / 2 ** (layer - 1)
+                        direction = 1 if i % 2 == 0 else -1
 
                 if layer % 2 == 0:
-                    center = pygame.Vector2(0, radius + 2 * radius * i)
+                    offset = radius * (1 + 2 * i)
                 else:
-                    center = pygame.Vector2(0, 2.0 - (radius + 2 * radius * i))
+                    offset = 2.0 - radius * (1 + 2 * i)
+
+                center = pygame.Vector2(0, offset)
 
                 step = {
                     "depth": layer,
@@ -257,18 +228,18 @@ class Animator:
 
                 self.steps.append(step)
 
-    def __get_position(
-        self, radius: float, angle: float, center: pygame.Vector2
-    ) -> pygame.Vector2:
-        circle_position = radius * pygame.Vector2(math.cos(angle), math.sin(angle))
+    def __update_step(self) -> None:
+        self.step_index += 1
 
-        return circle_position + pygame.Vector2(center.x, center.y)
+        if self.step_index < len(self.steps):
+            self.step = self.steps[self.step_index]
 
-    def __to_screen(self, position: pygame.Vector2):
-        screen_x = Animator.DISPLAY_FACTOR * position.x + Animator.WIDTH // 2
-        screen_y = Animator.DISPLAY_FACTOR * position.y + Animator.HEIGHT // 2
-
-        return (screen_x, screen_y)
+            self.angles["previous"] = self.step["angle"]
+            self.angles["current"] = self.step["angle"]
+            self.radius = self.step["radius"]
+            self.center = self.step["center"]
+        else:
+            self.drawing = False
 
     def __get_normalized_angle(self, angle: float) -> float:
         normalized_angle = (math.degrees(angle) % 360 + 360) % 360
@@ -277,7 +248,7 @@ class Animator:
 
     def __get_brush_color(self) -> Tuple[int, int, int]:
         if self.color_scheme == ColorScheme.Solid:
-            return (255, 0, 255)
+            return (255, 100, 255)
         elif self.color_scheme == ColorScheme.Depth:
             return (
                 25 + 230 * (self.step["depth"] / Animator.DEPTH),
@@ -292,31 +263,12 @@ class Animator:
             )
         elif self.color_scheme == ColorScheme.Time:
             return (
-                int((math.sin(self.time) + 1) / 2 * 255),
-                int(
-                    (
-                        math.sin(
-                            self.time + 2 * math.pi / 3,
-                        )
-                        + 1
-                    )
-                    / 2
-                    * 255
-                ),
+                int((math.sin(self.time + 0 * math.pi / 3) + 1) / 2 * 255),
+                int((math.sin(self.time + 2 * math.pi / 3) + 1) / 2 * 255),
                 int((math.sin(self.time + 4 * math.pi / 3) + 1) / 2 * 255),
             )
         elif self.color_scheme == ColorScheme.Angle:
-            match self.facing:
-                case Direction.North:
-                    angle = self.angle - 0 / 2 * math.pi
-                case Direction.East:
-                    angle = self.angle - 1 / 2 * math.pi
-                case Direction.South:
-                    angle = self.angle - 2 / 2 * math.pi
-                case Direction.West:
-                    angle = self.angle - 3 / 2 * math.pi
-
-            hue = self.__get_normalized_angle(angle) / 360
+            hue = self.__get_normalized_angle(self.angles["current"]) / 360
 
             rgb_normalized = colorsys.hsv_to_rgb(hue, 1.0, 1.0)
 
