@@ -102,12 +102,25 @@ class Animator:
                         else:
                             self.drawing = False
 
-                position = self.center + pygame.Vector2(-self.radius, self.radius)
+                position_top = pygame.Vector2(
+                    self.center.x, self.center.y
+                ) + pygame.Vector2(-self.radius, self.radius)
+                position_bottom = pygame.Vector2(
+                    self.center.x, -self.center.y
+                ) + pygame.Vector2(-self.radius, self.radius)
+
                 size = pygame.Vector2(2 * self.radius, 2 * self.radius)
 
-                bounding_rect = (
-                    Animator.WIDTH // 2 + position.x * Animator.DISPLAY_FACTOR,
-                    Animator.HEIGHT // 2 - position.y * Animator.DISPLAY_FACTOR,
+                bounding_rect_top = (
+                    Animator.WIDTH // 2 + position_top.x * Animator.DISPLAY_FACTOR,
+                    Animator.HEIGHT // 2 - position_top.y * Animator.DISPLAY_FACTOR,
+                    size.x * Animator.DISPLAY_FACTOR,
+                    size.y * Animator.DISPLAY_FACTOR,
+                )
+
+                bounding_rect_bottom = (
+                    Animator.WIDTH // 2 + position_bottom.x * Animator.DISPLAY_FACTOR,
+                    Animator.HEIGHT // 2 - position_bottom.y * Animator.DISPLAY_FACTOR,
                     size.x * Animator.DISPLAY_FACTOR,
                     size.y * Animator.DISPLAY_FACTOR,
                 )
@@ -116,18 +129,36 @@ class Animator:
                     pygame.draw.arc(
                         self.layers[self.step["depth"]],
                         self.__get_brush_color(),
-                        bounding_rect,
+                        bounding_rect_top,
                         self.angles["previous"],
                         self.angles["current"],
+                        Animator.BRUSH_SIZE,
+                    )
+
+                    pygame.draw.arc(
+                        self.layers[self.step["depth"]],
+                        self.__get_brush_color(),
+                        bounding_rect_bottom,
+                        self.angles["previous"] + math.pi,
+                        self.angles["current"] + math.pi,
                         Animator.BRUSH_SIZE,
                     )
                 else:
                     pygame.draw.arc(
                         self.layers[self.step["depth"]],
                         self.__get_brush_color(),
-                        bounding_rect,
+                        bounding_rect_top,
                         self.angles["current"],
                         self.angles["previous"],
+                        Animator.BRUSH_SIZE,
+                    )
+
+                    pygame.draw.arc(
+                        self.layers[self.step["depth"]],
+                        self.__get_brush_color(),
+                        bounding_rect_bottom,
+                        self.angles["current"] + math.pi,
+                        self.angles["previous"] + math.pi,
                         Animator.BRUSH_SIZE,
                     )
 
