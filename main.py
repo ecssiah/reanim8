@@ -1,198 +1,37 @@
 import colorsys
+from enum import Enum
 import math
-from typing import Tuple
+from typing import Tuple, Dict, List, Any
 
 import pygame
 
 
-class Phase:
-    Initial = 0
-    Snake = 1
-    Final = 2
+class Direction(Enum):
+    North = 0
+    East = 1
+    South = 2
+    West = 3
+
+
+class ColorScheme(Enum):
+    Solid = 0
+    Time = 1
+    Angle = 2
+    Depth = 3
+    InvDepth = 4
 
 
 class Animator:
-    SIZE = 800
+    WIDTH = 1200
+    HEIGHT = 800
 
     SPEED = 1.0
-    DEPTH = 4
+    DEPTH = 7
     BRUSH_SIZE = 1.0
-    DISPLAY_FACTOR = 180
+    DISPLAY_FACTOR = 256
 
-    PHASES = [
-        [
-            {
-                "direction": 1.0,
-                "radius": 1.0,
-                "center": pygame.Vector2(0, 1),
-                "start": 3 / 2 * math.pi,
-                "end": 7 / 2 * math.pi,
-            },
-            {
-                "direction": 1.0,
-                "radius": 0.5,
-                "center": pygame.Vector2(0, 0.5),
-                "start": 3 / 2 * math.pi,
-                "end": 5 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.5,
-                "center": pygame.Vector2(0, 1.5),
-                "start": 7 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, 1.25),
-                "start": 3 / 2 * math.pi,
-                "end": 1 / 2 * math.pi,
-            },
-            {
-                "direction": 1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, 1.75),
-                "start": 3 / 2 * math.pi,
-                "end": 5 / 2 * math.pi,
-            },
-            {
-                "direction": 1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, 1.75),
-                "start": 1 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, 1.25),
-                "start": 5 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-            {
-                "direction": 1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, 0.75),
-                "start": 1 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, 0.25),
-                "start": 5 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.50,
-                "center": pygame.Vector2(0, 0.50),
-                "start": 3 / 2 * math.pi,
-                "end": 1 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, 0.75),
-                "start": 5 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-            {
-                "direction": 1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, 0.25),
-                "start": 1 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-        ],
-        [
-            {
-                "direction": 1.0,
-                "radius": 1.0,
-                "center": pygame.Vector2(0, -1),
-                "start": 1 / 2 * math.pi,
-                "end": 5 / 2 * math.pi,
-            },
-            {
-                "direction": 1.0,
-                "radius": 0.5,
-                "center": pygame.Vector2(0, -0.5),
-                "start": 1 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.5,
-                "center": pygame.Vector2(0, -1.5),
-                "start": 5 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, -1.25),
-                "start": 5 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-            {
-                "direction": 1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, -1.75),
-                "start": 5 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-            {
-                "direction": 1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, -1.75),
-                "start": 3 / 2 * math.pi,
-                "end": 5 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, -1.25),
-                "start": 3 / 2 * math.pi,
-                "end": 1 / 2 * math.pi,
-            },
-            {
-                "direction": 1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, -0.75),
-                "start": 3 / 2 * math.pi,
-                "end": 5 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, -0.25),
-                "start": 3 / 2 * math.pi,
-                "end": 1 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.50,
-                "center": pygame.Vector2(0, -0.50),
-                "start": 5 / 2 * math.pi,
-                "end": 3 / 2 * math.pi,
-            },
-            {
-                "direction": -1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, -0.75),
-                "start": 3 / 2 * math.pi,
-                "end": 1 / 2 * math.pi,
-            },
-            {
-                "direction": 1.0,
-                "radius": 0.25,
-                "center": pygame.Vector2(0, -0.25),
-                "start": 3 / 2 * math.pi,
-                "end": 5 / 2 * math.pi,
-            },
-        ],
-    ]
+    layers: List[pygame.Surface]
+    steps: List[Dict[str, Any]]
 
     def __init__(self):
         pygame.init()
@@ -202,26 +41,30 @@ class Animator:
         self.active = True
         self.drawing = True
 
+        self.color_scheme = ColorScheme.InvDepth
+
         self.time = 0.0
 
-        self.phase_index = 0
+        self.__calculate_steps()
 
-        self.phase1 = Animator.PHASES[0][self.phase_index]
+        self.step_index = 0
 
-        self.angle1 = self.phase1["start"]
-        self.radius1 = self.phase1["radius"]
-        self.center1 = self.phase1["center"]
+        self.step = self.steps[self.step_index]
 
-        self.phase2 = Animator.PHASES[1][self.phase_index]
-
-        self.angle2 = self.phase2["start"]
-        self.radius2 = self.phase2["radius"]
-        self.center2 = self.phase2["center"]
+        self.facing = Direction.North
+        self.angle = self.step["angle"]
+        self.radius = self.step["radius"]
+        self.center = self.step["center"]
 
         self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((Animator.SIZE, Animator.SIZE))
+        self.screen = pygame.display.set_mode((Animator.WIDTH, Animator.HEIGHT))
 
-        self.screen.fill((0, 0, 0))
+        self.layers = [pygame.Surface(self.screen.get_size())]
+
+        for _ in range(Animator.DEPTH):
+            self.layers.append(pygame.Surface(self.screen.get_size(), pygame.SRCALPHA))
+
+        self.layers[0].fill((0, 0, 0))
 
     def run(self):
         while self.active:
@@ -230,64 +73,63 @@ class Animator:
                     self.active = False
 
             if self.drawing == True:
-                if self.phase1["direction"] == 1:
-                    if self.angle1 > self.phase1["end"]:
-                        self.phase_index += 1
+                if self.step["direction"] == 1:
+                    if self.angle > self.step["angle"] + math.pi:
+                        self.step_index += 1
 
-                        if self.phase_index < len(Animator.PHASES[0]):
-                            self.phase1 = Animator.PHASES[0][self.phase_index]
+                        if self.step_index < len(self.steps):
+                            self.step = self.steps[self.step_index]
 
-                            self.angle1 = self.phase1["start"]
-                            self.radius1 = self.phase1["radius"]
-                            self.center1 = self.phase1["center"]
-
-                            self.phase2 = Animator.PHASES[1][self.phase_index]
-
-                            self.angle2 = self.phase2["start"]
-                            self.radius2 = self.phase2["radius"]
-                            self.center2 = self.phase2["center"]
+                            self.angle = self.step["angle"]
+                            self.radius = self.step["radius"]
+                            self.center = self.step["center"]
                         else:
                             self.drawing = False
-                elif self.phase1["direction"] == -1:
-                    if self.angle1 < self.phase1["end"]:
-                        self.phase_index += 1
+                elif self.step["direction"] == -1:
+                    if self.angle < self.step["angle"] - math.pi:
+                        self.step_index += 1
 
-                        if self.phase_index < len(Animator.PHASES[0]):
-                            self.phase1 = Animator.PHASES[0][self.phase_index]
+                        if self.step_index < len(self.steps):
+                            self.step = self.steps[self.step_index]
 
-                            self.angle1 = self.phase1["start"]
-                            self.radius1 = self.phase1["radius"]
-                            self.center1 = self.phase1["center"]
-
-                            self.phase2 = Animator.PHASES[1][self.phase_index]
-
-                            self.angle2 = self.phase2["start"]
-                            self.radius2 = self.phase2["radius"]
-                            self.center2 = self.phase2["center"]
+                            self.angle = self.step["angle"]
+                            self.radius = self.step["radius"]
+                            self.center = self.step["center"]
                         else:
                             self.drawing = False
 
-                position1 = self.get_position(self.radius1, self.angle1, self.center1)
-
-                pygame.draw.circle(
-                    self.screen,
-                    self.get_brush_color_by_time(self.time),
-                    self.to_screen(position1),
-                    Animator.BRUSH_SIZE,
+                base_position = self.__get_position(
+                    self.radius, self.angle, self.center
                 )
 
-                self.angle1 += self.phase1["direction"] * 1 / 100.0 * Animator.SPEED
+                positions = {
+                    # Direction.North: base_position,
+                    Direction.East: base_position.rotate_rad(1 / 2 * math.pi),
+                    # Direction.South: base_position.rotate_rad(2 / 2 * math.pi),
+                    Direction.West: base_position.rotate_rad(3 / 2 * math.pi),
+                }
 
-                position2 = self.get_position(self.radius2, self.angle2, self.center2)
+                for facing, position in positions.items():
+                    self.facing = facing
 
-                pygame.draw.circle(
-                    self.screen,
-                    self.get_brush_color_by_time(self.time),
-                    self.to_screen(position2),
-                    Animator.BRUSH_SIZE,
+                    pygame.draw.circle(
+                        self.layers[self.step["depth"]],
+                        self.__get_brush_color(),
+                        self.__to_screen(position),
+                        Animator.BRUSH_SIZE,
+                    )
+
+                delta = (
+                    self.step["direction"]
+                    * (1 / 128)
+                    * Animator.SPEED
+                    * (1 / self.radius)
                 )
 
-                self.angle2 += self.phase2["direction"] * 1 / 100.0 * Animator.SPEED
+                self.angle += delta
+
+            for layer in self.layers:
+                self.screen.blit(layer, (0, 0))
 
             pygame.display.flip()
 
@@ -295,43 +137,147 @@ class Animator:
 
         pygame.quit()
 
-    def get_position(
+    def __calculate_steps(self) -> None:
+        self.steps = []
+
+        for p in range(1, Animator.DEPTH + 1, 1):
+            L = 2**p // 2
+
+            for i in range(L):
+                if p == 1:
+                    direction = 1
+                else:
+                    if p % 2 == 0:
+                        if i % 2 == 0:
+                            direction = 1
+                        else:
+                            direction = -1
+                    else:
+                        if i % 2 == 0:
+                            direction = -1
+                        else:
+                            direction = 1
+
+                angle = math.pi / 2 if p % 2 == 0 else -math.pi / 2
+
+                radius = 1.0 / 2 ** (p - 1)
+
+                if p % 2 == 0:
+                    center = pygame.Vector2(0, 2.0 - (radius + 2 * radius * i))
+                else:
+                    center = pygame.Vector2(0, radius + 2 * radius * i)
+
+                step = {
+                    "depth": p,
+                    "direction": direction,
+                    "angle": angle,
+                    "radius": radius,
+                    "center": center,
+                }
+
+                self.steps.append(step)
+
+        for p in range(Animator.DEPTH, 0, -1):
+            L = 2**p // 2
+
+            for i in range(L):
+                if p == 1:
+                    direction = 1
+                else:
+                    if p % 2 == 0:
+                        if i % 2 == 0:
+                            direction = -1
+                        else:
+                            direction = 1
+                    else:
+                        if i % 2 == 0:
+                            direction = 1
+                        else:
+                            direction = -1
+
+                angle = -math.pi / 2 if p % 2 == 0 else math.pi / 2
+
+                radius = 1.0 / 2 ** (p - 1)
+
+                if p % 2 == 0:
+                    center = pygame.Vector2(0, radius + 2 * radius * i)
+                else:
+                    center = pygame.Vector2(0, 2.0 - (radius + 2 * radius * i))
+
+                step = {
+                    "depth": p,
+                    "direction": direction,
+                    "angle": angle,
+                    "radius": radius,
+                    "center": center,
+                }
+
+                self.steps.append(step)
+
+    def __get_position(
         self, radius: float, angle: float, center: pygame.Vector2
     ) -> pygame.Vector2:
         circle_position = radius * pygame.Vector2(math.cos(angle), -math.sin(angle))
 
         return circle_position + pygame.Vector2(center.x, -center.y)
 
-    def to_screen(self, position: pygame.Vector2):
-        screen_x = Animator.DISPLAY_FACTOR * position.x + Animator.SIZE // 2
-        screen_y = Animator.DISPLAY_FACTOR * position.y + Animator.SIZE // 2
+    def __to_screen(self, position: pygame.Vector2):
+        screen_x = Animator.DISPLAY_FACTOR * position.x + Animator.WIDTH // 2
+        screen_y = Animator.DISPLAY_FACTOR * position.y + Animator.HEIGHT // 2
 
         return (screen_x, screen_y)
 
-    def get_normalized_angle(self, angle: float) -> float:
-        return (angle % 360 + 360) % 360
+    def __get_normalized_angle(self, angle: float) -> float:
+        normalized_angle = (math.degrees(angle) % 360 + 360) % 360
 
-    def get_brush_color_by_phase(self, phase_index: int) -> Tuple[int, int, int]:
-        if phase_index >= 0 and phase_index <= 5:
-            return (138, 255, 245)
-        elif phase_index > 5 and phase_index <= 12:
-            return (156, 116, 247)
-        elif phase_index > 12:
-            return (247, 116, 145)
+        return normalized_angle
 
-    def get_brush_color_by_angle(self, angle: float) -> Tuple[int, int, int]:
-        hue = self.get_normalized_angle(angle) / 360.0
+    def __get_brush_color(self) -> Tuple[int, int, int]:
+        if self.color_scheme == ColorScheme.Solid:
+            return (255, 0, 255)
+        elif self.color_scheme == ColorScheme.Depth:
+            return (
+                25 + 230 * (self.step["depth"] / Animator.DEPTH),
+                25 + 230 * (self.step["depth"] / Animator.DEPTH),
+                25 + 230 * (self.step["depth"] / Animator.DEPTH),
+            )
+        elif self.color_scheme == ColorScheme.InvDepth:
+            return (
+                25 + 230 * ((Animator.DEPTH - self.step["depth"]) / Animator.DEPTH),
+                25 + 230 * ((Animator.DEPTH - self.step["depth"]) / Animator.DEPTH),
+                25 + 230 * ((Animator.DEPTH - self.step["depth"]) / Animator.DEPTH),
+            )
+        elif self.color_scheme == ColorScheme.Time:
+            return (
+                int((math.sin(self.time) + 1) / 2 * 255),
+                int(
+                    (
+                        math.sin(
+                            self.time + 2 * math.pi / 3,
+                        )
+                        + 1
+                    )
+                    / 2
+                    * 255
+                ),
+                int((math.sin(self.time + 4 * math.pi / 3) + 1) / 2 * 255),
+            )
+        elif self.color_scheme == ColorScheme.Angle:
+            match self.facing:
+                case Direction.North:
+                    angle = self.angle - 0 / 2 * math.pi
+                case Direction.East:
+                    angle = self.angle - 1 / 2 * math.pi
+                case Direction.South:
+                    angle = self.angle - 2 / 2 * math.pi
+                case Direction.West:
+                    angle = self.angle - 3 / 2 * math.pi
 
-        rgb_normalized = colorsys.hsv_to_rgb(hue, 1.0, 1.0)
+            hue = self.__get_normalized_angle(angle) / 360
 
-        return tuple(int(c * 255) for c in rgb_normalized)
+            rgb_normalized = colorsys.hsv_to_rgb(hue, 1.0, 1.0)
 
-    def get_brush_color_by_time(self, time: float) -> Tuple[int, int, int]:
-        red = int((math.sin(time) + 1) / 2 * 255)
-        green = int((math.sin(time + 2 * math.pi / 3) + 1) / 2 * 255)
-        blue = int((math.sin(time + 4 * math.pi / 3) + 1) / 2 * 255)
-
-        return red, green, blue
+            return tuple(int(c * 255) for c in rgb_normalized)
 
 
 def main():
