@@ -30,7 +30,7 @@ class Animator:
     SYMMETRIC: bool = True
     DELTA_FACTOR: float = 1 / 128
 
-    WORLD_SCREEN_RATIO: int = 212
+    WORLD_SCREEN_RATIO: int = 280
 
     BRUSH_SIZE: int = 1
     BRUSH_COLOR: Tuple[int, int, int] = (255, 160, 255)
@@ -62,7 +62,7 @@ class Animator:
         self.active = True
         self.drawing = True
 
-        self.color_scheme = ColorScheme.Angle
+        self.color_scheme = ColorScheme.Time
 
         self.steps = self.__calculate_steps()
 
@@ -74,7 +74,6 @@ class Animator:
         self.center = self.step["center"]
 
         pygame.init()
-
         pygame.display.set_caption("ReAnim8")
 
         self.clock = pygame.time.Clock()
@@ -130,9 +129,9 @@ class Animator:
         }
 
         bounding_rects = {
-            Direction.North: self.__get_bounding_rect(centers[Direction.North]),
+            # Direction.North: self.__get_bounding_rect(centers[Direction.North]),
             Direction.East: self.__get_bounding_rect(centers[Direction.East]),
-            Direction.South: self.__get_bounding_rect(centers[Direction.South]),
+            # Direction.South: self.__get_bounding_rect(centers[Direction.South]),
             Direction.West: self.__get_bounding_rect(centers[Direction.West]),
         }
 
@@ -171,15 +170,17 @@ class Animator:
             radius = 1 / arc_count
             angle = math.pi / 2 if even_layer else -math.pi / 2
 
-            for i in range(arc_count):
-                offset = radius + 2 * i * radius
+            for arc in range(arc_count):
+                even_arc = arc % 2 == 0
+
+                offset = radius + 2 * arc * radius
 
                 if even_layer:
                     center = pygame.Vector2(0, 2 - offset)
-                    direction = -1 if i % 2 == 0 else 1
+                    direction = -1 if even_arc else 1
                 else:
                     center = pygame.Vector2(0, offset)
-                    direction = 1 if i % 2 == 0 else -1
+                    direction = 1 if even_arc else -1
 
                 steps.append(
                     {
@@ -201,15 +202,17 @@ class Animator:
             radius = 1 / arc_count
             angle = -math.pi / 2 if even_layer else math.pi / 2
 
-            for i in range(arc_count):
-                offset = radius + 2 * i * radius
+            for arc in range(arc_count):
+                even_arc = arc % 2 == 0
+
+                offset = radius + 2 * arc * radius
 
                 if even_layer:
                     center = pygame.Vector2(0, offset)
-                    direction = 1 if i % 2 == 0 else -1
+                    direction = 1 if even_arc else -1
                 else:
                     center = pygame.Vector2(0, 2 - offset)
-                    direction = -1 if i % 2 == 0 else 1
+                    direction = -1 if even_arc else 1
 
                 steps.append(
                     {
