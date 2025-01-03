@@ -130,8 +130,8 @@ class Animator:
             Direction.West: self.__get_bounding_rect(centers[Direction.West]),
         }
 
-        if self.angle["current"] >= self.angle["previous"]:
-            for direction in bounding_rects.keys():
+        for direction in bounding_rects.keys():
+            if self.angle["current"] >= self.angle["previous"]:
                 pygame.draw.arc(
                     layer,
                     self.__get_brush_color(),
@@ -140,8 +140,7 @@ class Animator:
                     self.angle["current"] + angle_offsets[direction],
                     Animator.BRUSH_SIZE,
                 )
-        else:
-            for direction in bounding_rects.keys():
+            else:
                 pygame.draw.arc(
                     layer,
                     self.__get_brush_color(),
