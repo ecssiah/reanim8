@@ -26,7 +26,7 @@ class Animator:
     HEIGHT: int = 900
 
     DEPTH: int = 6
-    SPEED: float = 2.0
+    SPEED: float = 1.0
     SYMMETRIC: bool = True
     DELTA_FACTOR: float = 1 / 128
 
@@ -62,7 +62,7 @@ class Animator:
         self.active = True
         self.drawing = True
 
-        self.color_scheme = ColorScheme.Depth
+        self.color_scheme = ColorScheme.Angle
 
         self.steps = self.__calculate_steps()
 
@@ -165,22 +165,21 @@ class Animator:
         steps = []
 
         for layer in range(1, Animator.DEPTH + 1):
+            even_layer = layer % 2 == 0
+
             arc_count = 2**layer
             radius = 1 / arc_count
-            angle = math.pi / 2 if layer % 2 == 0 else -math.pi / 2
+            angle = math.pi / 2 if even_layer else -math.pi / 2
 
             for i in range(arc_count):
-                if layer % 2 == 0:
-                    direction = -1 if i % 2 == 0 else 1
-                else:
-                    direction = 1 if i % 2 == 0 else -1
-
                 offset = radius + 2 * i * radius
 
-                if layer % 2 == 0:
+                if even_layer:
                     center = pygame.Vector2(0, 2 - offset)
+                    direction = -1 if i % 2 == 0 else 1
                 else:
                     center = pygame.Vector2(0, offset)
+                    direction = 1 if i % 2 == 0 else -1
 
                 steps.append(
                     {
@@ -192,34 +191,35 @@ class Animator:
                     }
                 )
 
-        if Animator.SYMMETRIC:
-            for layer in range(Animator.DEPTH, 0, -1):
-                arc_count = 2**layer
-                radius = 1 / arc_count
-                angle = -math.pi / 2 if layer % 2 == 0 else math.pi / 2
+        if Animator.SYMMETRIC == False:
+            return steps
 
-                for i in range(arc_count):
-                    if layer % 2 == 0:
-                        direction = 1 if i % 2 == 0 else -1
-                    else:
-                        direction = -1 if i % 2 == 0 else 1
+        for layer in range(Animator.DEPTH, 0, -1):
+            even_layer = layer % 2 == 0
 
-                    offset = radius + 2 * i * radius
+            arc_count = 2**layer
+            radius = 1 / arc_count
+            angle = -math.pi / 2 if even_layer else math.pi / 2
 
-                    if layer % 2 == 0:
-                        center = pygame.Vector2(0, offset)
-                    else:
-                        center = pygame.Vector2(0, 2 - offset)
+            for i in range(arc_count):
+                offset = radius + 2 * i * radius
 
-                    steps.append(
-                        {
-                            "depth": layer,
-                            "direction": direction,
-                            "angle": angle,
-                            "radius": radius,
-                            "center": center,
-                        }
-                    )
+                if even_layer:
+                    center = pygame.Vector2(0, offset)
+                    direction = 1 if i % 2 == 0 else -1
+                else:
+                    center = pygame.Vector2(0, 2 - offset)
+                    direction = -1 if i % 2 == 0 else 1
+
+                steps.append(
+                    {
+                        "depth": layer,
+                        "direction": direction,
+                        "angle": angle,
+                        "radius": radius,
+                        "center": center,
+                    }
+                )
 
         return steps
 
