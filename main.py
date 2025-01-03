@@ -26,7 +26,7 @@ class Animator:
     HEIGHT: int = 900
 
     DEPTH: int = 7
-    SPEED: float = 1.0
+    SPEED: float = 2.0
 
     WORLD_SCREEN_RATIO: int = 212
 
@@ -55,26 +55,25 @@ class Animator:
     layers: List[pygame.Surface]
 
     def __init__(self):
-        pygame.init()
-
-        pygame.display.set_caption("ReAnim8")
-
         self.time = 0.0
 
         self.active = True
         self.drawing = True
 
-        self.color_scheme = ColorScheme.Time
+        self.color_scheme = ColorScheme.Solid
 
-        self.__calculate_steps()
+        self.steps = self.__calculate_steps()
 
         self.step_index = 0
-
         self.step = self.steps[self.step_index]
 
         self.angle = {"previous": self.step["angle"], "current": self.step["angle"]}
         self.radius = self.step["radius"]
         self.center = self.step["center"]
+
+        pygame.init()
+
+        pygame.display.set_caption("ReAnim8")
 
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((Animator.WIDTH, Animator.HEIGHT))
@@ -165,8 +164,8 @@ class Animator:
 
         pygame.display.flip()
 
-    def __calculate_steps(self) -> None:
-        self.steps = []
+    def __calculate_steps(self) -> List[Dict[str, Any]]:
+        steps = []
 
         for layer in range(1, Animator.DEPTH + 1, 1):
             arc_count = 2**layer // 2
@@ -189,15 +188,15 @@ class Animator:
 
                 center = pygame.Vector2(0, offset)
 
-                step = {
-                    "depth": layer,
-                    "direction": direction,
-                    "angle": angle,
-                    "radius": radius,
-                    "center": center,
-                }
-
-                self.steps.append(step)
+                steps.append(
+                    {
+                        "depth": layer,
+                        "direction": direction,
+                        "angle": angle,
+                        "radius": radius,
+                        "center": center,
+                    }
+                )
 
         for layer in range(Animator.DEPTH, 0, -1):
             arc_count = 2**layer // 2
@@ -220,37 +219,44 @@ class Animator:
 
                 center = pygame.Vector2(0, offset)
 
-                step = {
-                    "depth": layer,
-                    "direction": direction,
-                    "angle": angle,
-                    "radius": radius,
-                    "center": center,
-                }
+                steps.append(
+                    {
+                        "depth": layer,
+                        "direction": direction,
+                        "angle": angle,
+                        "radius": radius,
+                        "center": center,
+                    }
+                )
 
-                self.steps.append(step)
+        return steps
+
+    def __set_step(self, index: int) -> bool:
+        if index < len(self.steps):
+            self.step = self.steps[index]
+
+            self.angle["previous"] = self.step["angle"]
+            self.angle["current"] = self.step["angle"]
+            self.radius = self.step["radius"]
+            self.center = self.step["center"]
+
+            return True
+        else:
+            return False
 
     def __update_step(self) -> None:
         step_complete = (
             self.step["direction"] == 1
-            and self.angle["current"] > self.step["angle"] + math.pi
+            and self.angle["current"] >= self.step["angle"] + math.pi
         ) or (
             self.step["direction"] == -1
-            and self.angle["current"] < self.step["angle"] - math.pi
+            and self.angle["current"] <= self.step["angle"] - math.pi
         )
 
         if step_complete:
             self.step_index += 1
 
-            if self.step_index < len(self.steps):
-                self.step = self.steps[self.step_index]
-
-                self.angle["previous"] = self.step["angle"]
-                self.angle["current"] = self.step["angle"]
-                self.radius = self.step["radius"]
-                self.center = self.step["center"]
-            else:
-                self.drawing = False
+            self.drawing = self.__set_step(self.step_index)
 
     def __get_bounding_rect(self, center: pygame.Vector2) -> pygame.Rect:
         position = center + pygame.Vector2(-self.radius, self.radius)
